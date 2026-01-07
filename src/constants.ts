@@ -7,23 +7,23 @@ export const SITE: Record<string, string> = {
 	/**
 	 * Base URL of your site, used in sitemap generation
 	 */
-	url: 'https://astro-theme-minimal-blog.lekoarts.de',
+	url: 'https://fegg.github.io',
 	/**
 	 * Site-wide title
 	 */
-	title: 'Minimal Blog',
+	title: '60 Sky',
 	/**
 	 * Used on index page and as a fallback if no title is set
 	 */
-	titleDefault: 'Astro Theme: Minimal Blog',
+	titleDefault: '60 Sky',
 	/**
 	 * Used in meta tags, RSS feed, and other places
 	 */
-	description: 'Minimal Astro blog theme with extensive code syntax highlighting capabilities, focus on typography, and clean design bringing your content to the forefront.',
+	description: '个人记录博客',
 	/**
 	 * Language used in the <html> tag
 	 */
-	lang: 'en-US',
+	lang: 'zh-CN',
 	/**
 	 * Name of the image inside `public` folder that should be used as a default og:image
 	 */
@@ -31,7 +31,7 @@ export const SITE: Record<string, string> = {
 	/**
 	 * Default author name that gets added to meta tags
 	 */
-	defaultAuthor: 'LekoArts',
+	defaultAuthor: 'Lucas.X',
 }
 
 interface Header {
@@ -59,22 +59,7 @@ export const HEADER: Header = {
 	/**
 	 * Arbitrary list of links (e.g. social media) shown on the right side of the header
 	 */
-	external: [
-		{
-			title: 'Bluesky',
-			url: 'https://bsky.app/profile/lekoarts.de',
-			props: {
-				target: '_blank',
-			},
-		},
-		{
-			title: 'Homepage',
-			url: 'https://www.lekoarts.de/?utm_source=astro-theme-minimal-blog',
-			props: {
-				target: '_blank',
-			},
-		},
-	],
+	external: [],
 }
 
 /**
