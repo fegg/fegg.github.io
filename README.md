@@ -1,122 +1,42 @@
-# Astro Theme: Minimal Blog
+![Spectre, a terminal-inspired theme for Astro.](./images/README.png)
 
-Welcome to **Astro Theme: Minimal Blog**, an ideal option to start sharing your ideas. It's easy to set up and features everything you'd need for a blog.
+Spectre is a terminal-inspired theme for Astro, built using TypeScript and Astro.
 
-[**Demo Website**](https://astro-theme-minimal-blog.lekoarts.de)
+## Getting Started
 
-## ✨ Features
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/louisescher/spectre/tree/master)
+[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/louisescher/spectre/tree/master)
 
-- Write blog posts with MDX
-- Styled with [Tailwind](https://tailwindcss.com/)
-- Code blocks powered by [Expressive Code](https://expressive-code.com/)
-- Custom asides component
-- Live coding powered by [Sandpack](https://github.com/codesandbox/sandpack)
-- RSS, Sitemap
-- Light/Dark/System color mode toggle
-- Add tags to your blog posts
-- [Pagefind](https://pagefind.app/) search
+Alternatively, you can create a new Astro project with Spectre like this:
 
-## 🚀 Getting started
+```bash
+# npm
+npm create astro@latest -- --template louisescher/spectre
 
-1. **Important:** Ensure that [pnpm](https://pnpm.io/installation) is installed
-1. Clone the [astro-theme-minimal-blog](https://github.com/LekoArts/astro-theme-minimal-blog) repository.
-1. Install dependencies.
-   ```shell
-   pnpm install
-   ```
-1. Run the development server.
-   ```shell
-   pnpm dev
-   ```
+# pnpm
+pnpm create astro@latest --template louisescher/spectre
 
-## 📝 Using & modifying this theme
-
-### Add content
-
-This theme features a CLI to help you scaffold new blog posts. It asks you questions to fill out the frontmatter and creates a file in the end. Run the CLI:
-
-```shell
-pnpm assistant
+# yarn
+yarn create astro --template louisescher/spectre
 ```
 
-If you want to extend it, change the [`assistant.ts`](./scripts/assistant.ts) file.
+## Features
 
-### Change constants
+- 100 / 100 Lighthouse performance
+- Responsive for all screen sizes
+- Fully accessible
+- Type-Safe
+- Auto-generated sitemap
+- Markdown / MDX Support
+- Builds on content collections
+- Search powered by [pagefind](https://pagefind.app)
+- Comments powered by [giscus](https://giscus.app) (can be turned off)
+- More!
 
-Parts of the theme are referencing [`constants.ts`](./src/constants.ts) to e.g. set the site title or main navigation. Modify its contents to suit your site before deploying it.
+## Curious?
 
-### Change existing tags / Add new tags
+Head over to [the preview page](https://spectre.lou.gg) to find out more!
 
-Inside [`constants.ts`](./src/constants.ts) the `FRONTMATTER_TAGS` map contains the available tags for your site. You need to add your display name and slug of the tag inside this map. The display name will be used in the UI and the slug will be used in the URL.
+### Spectre Integration
 
-It's referenced by Astro's content collections and also by the [`assistant.ts`](./scripts/assistant.ts) file.
-
-You can add a new tag like so:
-
-```ts
-export const FRONTMATTER_TAGS = new Map(
-	[
-		// Existing tags...
-		['Display name', 'slug-of-your-tag'] as const,
-	],
-)
-```
-
-## 🔍 Reference
-
-### Blog post frontmatter
-
-By default, these frontmatter fields are available. You need to change [`content.config.ts`](./src/content.config.ts) to adjust it.
-
-```yaml
-title: Markdown Reference Overview
-slug: markdown-reference-overview
-description: A post showcasing the markdown formatting of a post
-date: 2025-02-18
-lastUpdated: 2025-02-18
-tags:
-  - General
-  - MDX
-searchIndex: true
-image: https://absolute-link.google.com/image.png
-```
-
-### Custom MDX components
-
-#### `<Aside>`
-
-```md
-:::note
-Text
-:::
-
-:::caution[Watch out!]
-Text
-:::
-
-:::tip
-Text
-:::
-
-:::danger
-Text
-:::
-```
-
-Read the [Aside Example](./content/blog/2025-04-02--mdx-asides/index.mdx) to learn more.
-
-#### `<Playground>`
-
-````md
-<Playground template="react">
-
-```js name=App.js active
-export default function App() {
-  return <h1>Hello World</h1>
-}
-```
-
-</Playground>
-````
-
-Read the [Playground Example](./content/blog/2025-06-23--live-coding-with-sandpack/index.mdx) to learn more.
+If you want to know more about how the custom integration that is used in the `astro.config.ts` file works, head over to the [integration's own README](https://github.com/louisescher/spectre/tree/master/package)!

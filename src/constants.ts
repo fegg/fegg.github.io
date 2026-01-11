@@ -11,19 +11,19 @@ export const SITE: Record<string, string> = {
 	/**
 	 * Site-wide title
 	 */
-	title: '60 Sky',
+	title: '大毛星人',
 	/**
 	 * Used on index page and as a fallback if no title is set
 	 */
-	titleDefault: '60 Sky',
+	titleDefault: '大毛星人',
 	/**
 	 * Used in meta tags, RSS feed, and other places
 	 */
-	description: '个人记录博客',
+	description: 'Follow Your Heart, Think Independently, Think Deeply',
 	/**
 	 * Language used in the <html> tag
 	 */
-	lang: 'zh-CN',
+	lang: 'zh_cn',
 	/**
 	 * Name of the image inside `public` folder that should be used as a default og:image
 	 */
@@ -51,10 +51,6 @@ export const HEADER: Header = {
 			title: 'Blog',
 			url: '/blog/',
 		},
-		{
-			title: 'About',
-			url: '/about/',
-		},
 	],
 	/**
 	 * Arbitrary list of links (e.g. social media) shown on the right side of the header
@@ -67,11 +63,11 @@ export const HEADER: Header = {
  */
 export const FRONTMATTER_TAGS = new Map(
 	[
-		['General', 'general'] as const,
+		['Default', 'default'] as const,
 		['Coding', 'coding'] as const,
-		['MDX', 'mdx'] as const,
+		['Ai', 'ai'] as const,
 		['Open Source', 'open-source'] as const,
-		['서울', '서울'] as const,
+		['Heart', 'heart'] as const,
 	],
 )
 
