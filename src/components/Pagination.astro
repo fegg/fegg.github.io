@@ -1,0 +1,63 @@
+---
+import Icon from "./Icon.astro";
+
+interface Props {
+    prevUrl?: string;
+    nextUrl?: string;
+    class?: string;
+}
+
+const { prevUrl, nextUrl, class: className } = Astro.props;
+---
+
+<div class:list={["pagination-wrapper", className]}>
+    {
+        prevUrl ? (
+            <a href={prevUrl} class="icon-button" aria-label="Previous Page">
+                <Icon
+                    type="lucide"
+                    name="chevron-left"
+                    width={24}
+                    height={24}
+                />
+            </a>
+        ) : (
+            <span class="icon-button disabled">
+                <Icon
+                    type="lucide"
+                    name="chevron-left"
+                    width={24}
+                    height={24}
+                />
+            </span>
+        )
+    }
+    {
+        nextUrl ? (
+            <a href={nextUrl} class="icon-button" aria-label="Next Page">
+                <Icon
+                    type="lucide"
+                    name="chevron-right"
+                    width={24}
+                    height={24}
+                />
+            </a>
+        ) : (
+            <span class="icon-button disabled">
+                <Icon
+                    type="lucide"
+                    name="chevron-right"
+                    width={24}
+                    height={24}
+                />
+            </span>
+        )
+    }
+</div>
+
+<style>
+    .pagination-wrapper {
+        display: flex;
+        gap: 0.5rem;
+    }
+</style>

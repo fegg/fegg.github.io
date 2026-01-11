@@ -7,6 +7,7 @@ import type { GetStaticPaths } from "astro";
 import Card from "../components/Card.astro";
 import Icon from "../components/Icon.astro";
 import Layout from "../layouts/Layout.astro";
+import Pagination from "../components/Pagination.astro";
 
 export const getStaticPaths = (async ({ paginate }) => {
     const posts = await getCollection(
@@ -65,56 +66,10 @@ const { page, tags } = Astro.props;
                     <h2>所有文章 ({page.currentPage} / {page.lastPage})</h2>
                 </div>
                 <div class="header-pagination">
-                    {
-                        page.url.prev ? (
-                            <a
-                                href={page.url.prev}
-                                class="icon-button"
-                                aria-label="Previous Page"
-                            >
-                                <Icon
-                                    type="lucide"
-                                    name="chevron-left"
-                                    width={20}
-                                    height={20}
-                                />
-                            </a>
-                        ) : (
-                            <span class="icon-button disabled">
-                                <Icon
-                                    type="lucide"
-                                    name="chevron-left"
-                                    width={20}
-                                    height={20}
-                                />
-                            </span>
-                        )
-                    }
-                    {
-                        page.url.next ? (
-                            <a
-                                href={page.url.next}
-                                class="icon-button"
-                                aria-label="Next Page"
-                            >
-                                <Icon
-                                    type="lucide"
-                                    name="chevron-right"
-                                    width={20}
-                                    height={20}
-                                />
-                            </a>
-                        ) : (
-                            <span class="icon-button disabled">
-                                <Icon
-                                    type="lucide"
-                                    name="chevron-right"
-                                    width={20}
-                                    height={20}
-                                />
-                            </span>
-                        )
-                    }
+                    <Pagination
+                        prevUrl={page.url.prev}
+                        nextUrl={page.url.next}
+                    />
                 </div>
             </div>
             <div class="content-container">
@@ -142,56 +97,7 @@ const { page, tags } = Astro.props;
                 class="pagination-container"
                 style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 2rem;"
             >
-                {
-                    page.url.prev ? (
-                        <a
-                            href={page.url.prev}
-                            class="icon-button"
-                            aria-label="Previous Page"
-                        >
-                            <Icon
-                                type="lucide"
-                                name="chevron-left"
-                                width={20}
-                                height={20}
-                            />
-                        </a>
-                    ) : (
-                        <span class="icon-button disabled">
-                            <Icon
-                                type="lucide"
-                                name="chevron-left"
-                                width={20}
-                                height={20}
-                            />
-                        </span>
-                    )
-                }
-                {
-                    page.url.next ? (
-                        <a
-                            href={page.url.next}
-                            class="icon-button"
-                            aria-label="Next Page"
-                        >
-                            <Icon
-                                type="lucide"
-                                name="chevron-right"
-                                width={20}
-                                height={20}
-                            />
-                        </a>
-                    ) : (
-                        <span class="icon-button disabled">
-                            <Icon
-                                type="lucide"
-                                name="chevron-right"
-                                width={20}
-                                height={20}
-                            />
-                        </span>
-                    )
-                }
+                <Pagination prevUrl={page.url.prev} nextUrl={page.url.next} />
             </div>
         </Card>
     </div>

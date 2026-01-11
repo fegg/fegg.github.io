@@ -35,9 +35,9 @@
 }
 
 .icon-button:not(.disabled):hover {
-	background: rgba(255, 255, 255, 0.1);
+	background: var(--primary);
 	color: white;
-	border-color: rgba(255, 255, 255, 0.1);
+	border-color: var(--primary);
 }
 
 .icon-button.disabled {
