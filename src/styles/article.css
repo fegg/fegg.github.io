@@ -88,30 +88,26 @@ ol li a.active {
 	width: 100%;
 	height: fit-content;
 	scroll-margin-top: 2rem;
+	padding: 0 0 1rem;
+	border-bottom: 1px solid #353535;
 }
 
 .header {
 	display: flex;
 	flex-direction: column;
 	gap: 0.5rem;
-	position: absolute;
-	bottom: 1.5rem;
-	left: 1rem;
-	max-width: calc(100% - 3rem);
-	z-index: 2;
+	margin-top: 1rem;
 }
 
 .article-h1 {
 	margin-bottom: 0;
 	font-size: 2em;
-	background: #ffffff;
-	padding: 0.25rem 0.675rem;
+	padding: 0.25rem 0;
 	box-decoration-break: clone;
 	-webkit-box-decoration-break: clone;
 	position: relative;
 	line-height: 1.2;
 	display: inline;
-	color: #000000;
 }
 
 .article-info {
@@ -119,19 +115,13 @@ ol li a.active {
 	flex-direction: row;
 	gap: 0.5rem;
 	font-family: "Geist Mono", "Courier New", Courier, monospace;
-	background: #ffffff;
-	color: #000000;
 	box-decoration-break: clone;
 	-webkit-box-decoration-break: clone;
-	padding: 0 0.75rem;
 	width: fit-content;
 }
 
 @media screen and (max-width: 640px) {
 	.header {
-		position: relative;
-		bottom: 0;
-		left: 0;
 		width: fit-content;
 		max-width: none;
 		margin-top: 1rem;
@@ -140,15 +130,11 @@ ol li a.active {
 	.article-h1 {
 		display: inline;
 		background-color: transparent;
-		padding: 0;
-		color: white;
 	}
 
 	.article-info {
 		display: block;
 		background-color: transparent;
-		padding: 0;
-		color: white;
 	}
 }
 

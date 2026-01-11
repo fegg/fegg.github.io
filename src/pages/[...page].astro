@@ -63,12 +63,15 @@ const { page, tags } = Astro.props;
                         height={24}
                         class="glow-icon"
                     />
-                    <h2>所有文章 ({page.currentPage} / {page.lastPage})</h2>
+                    <h2 class="header-title">
+                        所有文章 ({page.currentPage} / {page.lastPage})
+                    </h2>
                 </div>
                 <div class="header-pagination">
                     <Pagination
                         prevUrl={page.url.prev}
                         nextUrl={page.url.next}
+                        class="header-pagination-nav"
                     />
                 </div>
             </div>
@@ -93,11 +96,12 @@ const { page, tags } = Astro.props;
                     ))
                 }
             </div>
-            <div
-                class="pagination-container"
-                style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 2rem;"
-            >
-                <Pagination prevUrl={page.url.prev} nextUrl={page.url.next} />
+            <div class="pagination-container">
+                <Pagination
+                    prevUrl={page.url.prev}
+                    nextUrl={page.url.next}
+                    class="footer-pagination-nav"
+                />
             </div>
         </Card>
     </div>
@@ -165,3 +169,10 @@ const { page, tags } = Astro.props;
 
     updatePostsVisibility();
 </script>
+
+<style>
+    .header-title {
+        margin: 0;
+        font-size: 1.5rem;
+    }
+</style>

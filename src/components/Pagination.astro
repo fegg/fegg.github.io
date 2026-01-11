@@ -60,4 +60,15 @@ const { prevUrl, nextUrl, class: className } = Astro.props;
         display: flex;
         gap: 0.5rem;
     }
+    @media (max-width: 768px) {
+        .pagination-wrapper {
+            &.header-pagination-nav {
+                display: none;
+            }
+        }
+        .footer-pagination-nav {
+            flex: 1;
+            justify-content: space-between;
+        }
+    }
 </style>
