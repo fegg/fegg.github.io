@@ -22,7 +22,7 @@ export const getStaticPaths = (async ({ paginate }) => {
     );
 
     return paginate(sortedPosts, {
-        pageSize: 10,
+        pageSize: 5,
         props: { tags },
     });
 }) satisfies GetStaticPaths;
@@ -54,14 +54,68 @@ const { page, tags } = Astro.props;
     <div class="layout-grid-right" slot="right">
         <Card>
             <div class="header-container">
-                <Icon
-                    type="lucide"
-                    name="rss"
-                    width={24}
-                    height={24}
-                    class="glow-icon"
-                />
-                <h2>所有文章 ({page.currentPage} / {page.lastPage})</h2>
+                <div class="header-left">
+                    <Icon
+                        type="lucide"
+                        name="rss"
+                        width={24}
+                        height={24}
+                        class="glow-icon"
+                    />
+                    <h2>所有文章 ({page.currentPage} / {page.lastPage})</h2>
+                </div>
+                <div class="header-pagination">
+                    {
+                        page.url.prev ? (
+                            <a
+                                href={page.url.prev}
+                                class="icon-button"
+                                aria-label="Previous Page"
+                            >
+                                <Icon
+                                    type="lucide"
+                                    name="chevron-left"
+                                    width={20}
+                                    height={20}
+                                />
+                            </a>
+                        ) : (
+                            <span class="icon-button disabled">
+                                <Icon
+                                    type="lucide"
+                                    name="chevron-left"
+                                    width={20}
+                                    height={20}
+                                />
+                            </span>
+                        )
+                    }
+                    {
+                        page.url.next ? (
+                            <a
+                                href={page.url.next}
+                                class="icon-button"
+                                aria-label="Next Page"
+                            >
+                                <Icon
+                                    type="lucide"
+                                    name="chevron-right"
+                                    width={20}
+                                    height={20}
+                                />
+                            </a>
+                        ) : (
+                            <span class="icon-button disabled">
+                                <Icon
+                                    type="lucide"
+                                    name="chevron-right"
+                                    width={20}
+                                    height={20}
+                                />
+                            </span>
+                        )
+                    }
+                </div>
             </div>
             <div class="content-container">
                 {
@@ -86,24 +140,56 @@ const { page, tags } = Astro.props;
             </div>
             <div
                 class="pagination-container"
-                style="display: flex; justify-content: space-between; margin-top: 2rem;"
+                style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 2rem;"
             >
                 {
                     page.url.prev ? (
-                        <a href={page.url.prev} class="button">
-                            上一页
+                        <a
+                            href={page.url.prev}
+                            class="icon-button"
+                            aria-label="Previous Page"
+                        >
+                            <Icon
+                                type="lucide"
+                                name="chevron-left"
+                                width={20}
+                                height={20}
+                            />
                         </a>
                     ) : (
-                        <div />
+                        <span class="icon-button disabled">
+                            <Icon
+                                type="lucide"
+                                name="chevron-left"
+                                width={20}
+                                height={20}
+                            />
+                        </span>
                     )
                 }
                 {
                     page.url.next ? (
-                        <a href={page.url.next} class="button">
-                            下一页
+                        <a
+                            href={page.url.next}
+                            class="icon-button"
+                            aria-label="Next Page"
+                        >
+                            <Icon
+                                type="lucide"
+                                name="chevron-right"
+                                width={20}
+                                height={20}
+                            />
                         </a>
                     ) : (
-                        <div />
+                        <span class="icon-button disabled">
+                            <Icon
+                                type="lucide"
+                                name="chevron-right"
+                                width={20}
+                                height={20}
+                            />
+                        </span>
                     )
                 }
             </div>

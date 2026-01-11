@@ -1,40 +1,155 @@
 .header-container {
 	display: flex;
-	flex-direction: row;
 	align-items: center;
+	justify-content: space-between;
 	gap: 1rem;
-	margin-bottom: 1rem;
+	margin-bottom: 1.5rem;
 }
 
-.header-container * {
+.header-left {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+}
+
+.header-pagination {
+	display: flex;
+	gap: 0.5rem;
+}
+
+.icon-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+	width: 32px;
+	height: 32px;
+	border-radius: 8px;
+	line-height: 0;
+	overflow: hidden;
+	color: #a1a1aa;
+	background: rgba(255, 255, 255, 0.05);
+	transition: all 0.2s ease;
+	text-decoration: none;
+	border: 1px solid transparent;
+}
+
+.icon-button:not(.disabled):hover {
+	background: rgba(255, 255, 255, 0.1);
+	color: white;
+	border-color: rgba(255, 255, 255, 0.1);
+}
+
+.icon-button.disabled {
+	opacity: 0.3;
+	cursor: not-allowed;
+	background: transparent;
+}
+
+.content-container {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+}
+
+.post-container {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	padding: 1.5rem;
+	border-radius: 12px;
+	background: rgba(255, 255, 255, 0.02);
+	border: 1px solid rgba(255, 255, 255, 0.05);
+	text-decoration: none;
+	color: #a1a1aa;
+	transition: all 0.3s ease;
+}
+
+.post-container:hover {
+	background: rgba(255, 255, 255, 0.05);
+	border-color: rgba(255, 255, 255, 0.1);
+	box-shadow: inset 0 0 10px var(--primary);
+}
+
+.post-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 1rem;
+}
+
+.post-header h3 {
 	margin: 0;
+	color: white;
+	font-size: 1.25rem;
+	font-weight: 600;
+}
+
+.post-date {
+	font-size: 0.875rem;
+	color: #71717a;
+	white-space: nowrap;
+}
+
+.pagination-container {
+	padding-top: 2rem;
+	border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.button {
+	padding: 0.5rem 1rem;
+	border-radius: 8px;
+	background: rgba(255, 255, 255, 0.05);
+	color: white;
+	text-decoration: none;
+	font-size: 0.925rem;
+	transition: all 0.2s ease;
+}
+
+.button:hover {
+	background: rgba(255, 255, 255, 0.1);
 }
 
 .tags-list {
 	display: flex;
-	flex-direction: row;
-	align-items: center;
 	flex-wrap: wrap;
-	list-style-type: none;
-	margin: 0;
+	gap: 0.5rem;
 	padding: 0;
-	gap: 1rem;
+	margin: 0;
+	list-style: none;
+}
+
+.tags-list li {
+	margin: 0;
 }
 
 .blog-tag {
-	padding: 0.25rem 0.5rem;
-	background: #252525;
-	color: white;
+	display: block;
+	padding: 0.25rem 0.75rem;
+	border-radius: 20px;
+	background: rgba(255, 255, 255, 0.05);
+	color: #a1a1aa;
 	text-decoration: none;
+	font-size: 0.875rem;
+	transition: all 0.2s ease;
+	border: 1px solid transparent;
 }
 
-.blog-tag:hover,
-.blog-tag:focus-visible {
-	background: #353535;
+.blog-tag:hover {
+	background: rgba(255, 255, 255, 0.1);
 	color: white;
-	text-decoration: none;
 }
 
 .blog-tag.active {
 	background: var(--primary);
+	color: white;
+	box-shadow: 0 0 15px var(--primary-glow);
+}
+
+@media (max-width: 640px) {
+	.post-header {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.25rem;
+	}
 }

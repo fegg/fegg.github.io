@@ -197,10 +197,11 @@ import Icon from "./Icon.astro";
 
   #search {
     background: none;
-    border: none;
+    border: 1px solid var(--primary);
     outline: none;
     padding: 0.25rem 0.5rem;
-    width: 160px;
+    width: 200px;
+    transition: all 0.15s linear;
   }
 
   #search::placeholder {
@@ -221,6 +222,8 @@ import Icon from "./Icon.astro";
     width: 200%;
     z-index: 10;
     padding: 0.5rem;
+    max-height: 30rem;
+    overflow: auto;
   }
 
   #search-results.active:has(*) {
