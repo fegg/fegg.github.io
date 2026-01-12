@@ -10,6 +10,7 @@ import spectre from './package/src/integration';
 import { SITE } from './src/constants';
 
 // https://astro.build/config
+const isDev = process.argv.includes('dev');
 const config = defineConfig({
 	site: 'https://fegg.github.io',
 	output: 'static',
@@ -37,41 +38,52 @@ const config = defineConfig({
 			giscus: false,
 		}),
 	],
-	adapter: node({
-		mode: 'standalone',
-	}),
+	adapter: isDev
+		? node({
+			mode: 'standalone',
+		})
+		: undefined,
 	vite: {
-		plugins: [
-			{
-				name: 'serve-pagefind-dev',
-				configureServer(server) {
-					server.middlewares.use((req, res, next) => {
-						if (req.url?.startsWith('/pagefind/')) {
-							// Handle query parameters by parsing the URL
-							const url = new URL(req.url, 'http://localhost');
-							const filePath = path.join(process.cwd(), 'dist/client', url.pathname);
-							if (fs.existsSync(filePath)) {
-								const stat = fs.statSync(filePath);
-								if (stat.isFile()) {
-									const ext = path.extname(filePath);
-									let contentType = 'application/octet-stream';
-									if (ext === '.js') contentType = 'text/javascript';
-									else if (ext === '.css') contentType = 'text/css';
-									else if (ext === '.json') contentType = 'application/json';
-									else if (ext === '.wasm') contentType = 'application/wasm';
-									else if (ext === '.pf_meta') contentType = 'application/octet-stream';
+		plugins: isDev
+			? [
+				{
+					name: 'serve-pagefind-dev',
+					configureServer(server) {
+						server.middlewares.use((req, res, next) => {
+							if (req.url?.startsWith('/pagefind/')) {
+								// Handle query parameters by parsing the URL
+								const url = new URL(req.url, 'http://localhost');
+								const filePath = path.join(
+									process.cwd(),
+									'dist/client',
+									url.pathname,
+								);
+								if (fs.existsSync(filePath)) {
+									const stat = fs.statSync(filePath);
+									if (stat.isFile()) {
+										const ext = path.extname(filePath);
+										let contentType = 'application/octet-stream';
+										if (ext === '.js') contentType = 'text/javascript';
+										else if (ext === '.css') contentType = 'text/css';
+										else if (ext === '.json')
+											contentType = 'application/json';
+										else if (ext === '.wasm')
+											contentType = 'application/wasm';
+										else if (ext === '.pf_meta')
+											contentType = 'application/octet-stream';
 
-									res.setHeader('Content-Type', contentType);
-									fs.createReadStream(filePath).pipe(res);
-									return;
+										res.setHeader('Content-Type', contentType);
+										fs.createReadStream(filePath).pipe(res);
+										return;
+									}
 								}
 							}
-						}
-						next();
-					});
+							next();
+						});
+					},
 				},
-			},
-		],
+			]
+			: [],
 	},
 });
 
