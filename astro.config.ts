@@ -55,7 +55,7 @@ const config = defineConfig({
 								const url = new URL(req.url, 'http://localhost');
 								const filePath = path.join(
 									process.cwd(),
-									'dist/client',
+									'dist',
 									url.pathname,
 								);
 								if (fs.existsSync(filePath)) {
