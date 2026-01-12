@@ -6,8 +6,8 @@ import { openGraph } from "spectre:globals";
 import type { GetStaticPaths } from "astro";
 import Card from "../components/Card.astro";
 import Icon from "../components/Icon.astro";
-import Layout from "../layouts/Layout.astro";
 import Pagination from "../components/Pagination.astro";
+import Layout from "../layouts/Layout.astro";
 
 export const getStaticPaths = (async ({ paginate }) => {
     const posts = await getCollection(
