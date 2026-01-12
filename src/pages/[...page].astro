@@ -36,22 +36,6 @@ const { page, tags } = Astro.props;
     description={openGraph.blog.description}
     pagefindIgnore
 >
-    <div class="layout-grid-left" slot="left">
-        <Card class="flex-col-card">
-            <h2 class="no-mt">Filter</h2>
-            <ul class="tags-list">
-                {
-                    Array.from(new Set(tags)).map((tag) => (
-                        <li>
-                            <a class="blog-tag" href="/" data-tag={tag}>
-                                {tag}
-                            </a>
-                        </li>
-                    ))
-                }
-            </ul>
-        </Card>
-    </div>
     <div class="layout-grid-right" slot="right">
         <Card>
             <div class="header-container">
