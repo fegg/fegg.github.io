@@ -1,0 +1,56 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { SITE } from "../constants";
+---
+
+<Layout title="About" description="About this blog">
+    <article>
+        <h1>About</h1>
+
+        <p>
+            Welcome to {SITE.title}. {SITE.description}
+        </p>
+
+        <h2>About This Blog</h2>
+        <p>
+            This is a personal blog where I share my thoughts, experiences, and
+            learnings on various topics including technology, coding, AI, and
+            more.
+        </p>
+
+        <h2>Contact</h2>
+        <p>Feel free to reach out through:</p>
+        <ul>
+            <li>
+                <a
+                    href="https://github.com/fegg"
+                    target="_blank"
+                    rel="noopener noreferrer">GitHub</a>
+            </li>
+            <li><a href="/index.xml">RSS Feed</a></li>
+        </ul>
+    </article>
+</Layout>
+
+<style>
+    article {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    h1 {
+        font-size: 2rem;
+        margin-bottom: var(--spacing-md);
+        padding-bottom: var(--spacing-md);
+        border-bottom: 1px solid var(--dark-border-color);
+    }
+
+    h2 {
+        margin-top: var(--spacing-xl);
+        margin-bottom: var(--spacing-sm);
+    }
+
+    ul {
+        list-style-position: inside;
+    }
+</style>

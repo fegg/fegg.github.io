@@ -4,33 +4,95 @@ import Icon from "./Icon.astro";
 ---
 
 <nav>
-  <a class="site-title" href="/">{name}</a>
-  <ul>
-    <li>
-      <input id="search" type="text" placeholder="Search (Ctrl+K)" />
-      <div id="search-results"></div>
-    </li>
-  </ul>
-  <button class="mobile-nav-toggle" aria-label="Mobile menu trigger">
-    <Icon
-      type="lucide"
-      name="menu"
-      width={24}
-      height={24}
-      class="menu-closed"
-    />
-    <Icon type="lucide" name="x" width={24} height={24} class="menu-open" />
-  </button>
+  <div class="nav-container">
+    <a class="site-title" href="/">{name}</a>
+    <div class="nav-links">
+      <a href="/about/">About</a>
+      <a
+        href="https://github.com/fegg"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="GitHub"
+      >
+        <Icon type="lucide" name="github" width={20} height={20} />
+      </a>
+      <a href="/index.xml" aria-label="RSS Feed">
+        <Icon type="lucide" name="rss" width={20} height={20} />
+      </a>
+
+      <button
+        id="theme-toggle"
+        class="theme-toggle-btn"
+        aria-label="Toggle Theme"
+      >
+        <div class="toggle-icon-viewport">
+          <div class="toggle-icon-wrapper">
+            <div class="sun-icon-box">
+              <Icon
+                type="lucide"
+                name="sun"
+                width={20}
+                height={20}
+                stroke-width={2.5}
+              />
+            </div>
+            <div class="moon-icon-box">
+              <Icon
+                type="lucide"
+                name="moon"
+                width={20}
+                height={20}
+                stroke-width={2.5}
+              />
+            </div>
+          </div>
+        </div>
+      </button>
+
+      <div class="search-container">
+        <input id="search" type="text" placeholder="Search" />
+        <div id="search-results"></div>
+      </div>
+    </div>
+  </div>
 </nav>
+
+<script is:inline>
+  // Theme logic
+  const themeToggle = document.querySelector("#theme-toggle");
+  const htmlElement = document.documentElement;
+
+  const getInitialTheme = () => {
+    if (typeof localStorage !== "undefined" && localStorage.getItem("theme")) {
+      return localStorage.getItem("theme");
+    }
+    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+      return "dark";
+    }
+    return "light";
+  };
+
+  const currentTheme = getInitialTheme();
+  htmlElement.setAttribute("data-theme", currentTheme);
+
+  themeToggle?.addEventListener("click", () => {
+    const theme =
+      htmlElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+    htmlElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+  });
+</script>
+
 <script is:inline>
   const searchElement = document.querySelector("#search");
   const results = document.querySelector("#search-results");
-  const navToggle = document.querySelector(".mobile-nav-toggle");
-
   let focusIndex = -1;
+  let pagefindInitialized = false;
 
+  // Keyboard shortcuts
   document.addEventListener("keydown", (e) => {
-    if (e.key === "k" && e.ctrlKey) {
+    if (e.key === "k" && (e.ctrlKey || e.metaKey)) {
+      e.preventDefault();
       searchElement.focus();
     }
 
@@ -40,40 +102,26 @@ import Icon from "./Icon.astro";
       focusIndex = -1;
     }
 
-    if (e.key === "ArrowDown") {
+    if (e.key === "ArrowDown" && results.classList.contains("active")) {
       e.preventDefault();
-
       focusIndex++;
-      const results = document.querySelectorAll("#search-results a");
-
-      if (focusIndex >= results.length) {
-        focusIndex = 0;
-      }
-
-      results[focusIndex]?.focus();
+      const resultLinks = document.querySelectorAll("#search-results a");
+      if (focusIndex >= resultLinks.length) focusIndex = 0;
+      resultLinks[focusIndex]?.focus();
     }
 
-    if (e.key === "ArrowUp") {
+    if (e.key === "ArrowUp" && results.classList.contains("active")) {
       e.preventDefault();
-
       focusIndex--;
-      const results = document.querySelectorAll("#search-results a");
-
-      if (focusIndex < 0) {
-        focusIndex = results.length - 1;
-      }
-
-      results[focusIndex]?.focus();
+      const resultLinks = document.querySelectorAll("#search-results a");
+      if (focusIndex < 0) focusIndex = resultLinks.length - 1;
+      resultLinks[focusIndex]?.focus();
     }
   });
 
-  let pagefindInitialized = false;
-
+  // Search functionality
   searchElement?.addEventListener("focus", async () => {
-    searchElement.placeholder = "";
     results.classList.add("active");
-
-    // initialize pagefind on first focus
     if (!pagefindInitialized) {
       try {
         window.pagefind = await import("/pagefind/pagefind.js");
@@ -86,295 +134,262 @@ import Icon from "./Icon.astro";
   });
 
   searchElement?.addEventListener("blur", () => {
-    handleTabletChange();
     setTimeout(() => {
       if (!document.activeElement?.closest("#search-results")) {
         results.classList.remove("active");
         focusIndex = -1;
       }
-    }, 1);
-  });
-
-  results?.addEventListener("focusout", (e) => {
-    if (!e.relatedTarget?.closest("#search-results")) {
-      results.classList.remove("active");
-      focusIndex = -1;
-    }
+    }, 200);
   });
 
   searchElement?.addEventListener("input", async (e) => {
-    // only search if Pagefind is ready
-    if (!pagefindInitialized) {
-      return;
-    }
+    if (!pagefindInitialized) return;
 
     results.innerHTML = "";
-    let searchResultHtml = "";
-
     const search = await window.pagefind.search(e.target.value);
 
-    let i = 0;
-    for (const result of search.results) {
-      i++;
-
-      const data = await result.data();
-
-      searchResultHtml += `
-        <a href="${data.url}">
-          <h3 class="no-mt">${data.meta.title}</h3>
-          <p>${data.excerpt}</p>
-        </a>
-        ${i < search.results.length ? '<hr class="separator">' : ""}
-      `;
-    }
-
     if (search.results.length === 0 && e.target.value.length > 0) {
-      results.innerHTML = '<p style="margin-top: 0;">No results found</p>';
+      results.innerHTML = '<p class="no-results">No results found</p>';
     } else {
-      results.innerHTML = searchResultHtml;
+      let html = "";
+      for (let i = 0; i < search.results.length; i++) {
+        const data = await search.results[i].data();
+        html += `
+          <a href="${data.url}">
+            <h4>${data.meta.title}</h4>
+            <p>${data.excerpt}</p>
+          </a>
+        `;
+      }
+      results.innerHTML = html;
     }
-
     results.classList.add("active");
   });
-
-  navToggle?.addEventListener("click", () => {
-    navToggle.classList.toggle("active");
-    document.querySelector("nav").classList.toggle("active");
-  });
-
-  const handleTabletChange = () => {
-    if (window.matchMedia("(max-width: 640px)").matches) {
-      searchElement.placeholder = "Search";
-    } else {
-      searchElement.placeholder = "Search (Ctrl+K)";
-    }
-  };
-
-  document.addEventListener("DOMContentLoaded", handleTabletChange);
-  document.addEventListener("resize", handleTabletChange);
 </script>
+
 <style>
   nav {
+    background-color: var(--color-bg-primary);
+    border-bottom: 1px solid var(--color-border-light);
+    padding: var(--space-4) 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .nav-container {
+    max-width: var(--layout-max-width);
+    margin: 0 auto;
+    padding: 0 var(--space-6);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-family: "Geist Mono", "Courier New", Courier, monospace;
-    z-index: 50;
   }
 
   .site-title {
-    font-weight: 800;
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: var(--color-text-primary);
     text-decoration: none;
-    font-size: 1.5em;
-    z-index: 2;
+    font-family: var(--font-serif);
   }
 
-  nav ul {
+  .site-title:hover {
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  .nav-links {
     display: flex;
-    gap: 1rem;
-    margin: 0;
-    padding: 0;
-    list-style-type: none;
+    align-items: center;
+    gap: var(--space-6);
+  }
+
+  .nav-links a {
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    transition: color var(--transition-fast);
+    display: flex;
     align-items: center;
   }
 
-  nav ul li {
-    position: relative;
-  }
-
-  nav a {
-    color: inherit;
+  .nav-links a:hover {
+    color: var(--color-text-primary);
     text-decoration: none;
-    padding: 0.25rem 0.5rem;
   }
 
-  nav a:hover,
-  nav a:focus-visible,
-  nav a.active {
-    background-color: var(--primary);
-    outline: none;
+  /* Refined Compact Toggle */
+  .theme-toggle-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: background-color var(--transition-fast);
+    width: 24px; /* Slightly larger hit area */
+    height: 24px;
+  }
+
+  .theme-toggle-btn:hover {
+    background-color: var(--color-bg-secondary);
+  }
+
+  .toggle-icon-viewport {
+    width: 20px;
+    height: 20px;
+    overflow: hidden;
+    position: relative;
+    pointer-events: none;
+  }
+
+  .toggle-icon-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 20px;
+    height: 40px; /* Crucial: 2 * 20px */
+    transition: transform 0.4s cubic-bezier(0.68, -0.6, 0.32, 1.6);
+  }
+
+  :global([data-theme="dark"]) .toggle-icon-wrapper {
+    transform: translateY(-20px);
+  }
+
+  .sun-icon-box,
+  .moon-icon-box {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* GitHub-like Saturated Colors */
+  .sun-icon-box :global(svg) {
+    color: #eab308; /* Saturated Yellow-600 */
+    fill: #eab308;
+    fill-opacity: 0.2;
+  }
+
+  .moon-icon-box :global(svg) {
+    color: #4f46e5; /* Saturated Indigo-600 */
+    fill: #4f46e5;
+    fill-opacity: 0.2;
+  }
+
+  .theme-toggle-btn:active .toggle-icon-wrapper {
+    transition-duration: 0.2s;
+  }
+
+  .search-container {
+    position: relative;
+    margin-left: var(--space-2);
   }
 
   #search {
-    background: none;
-    border: 1px solid #353535;
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-primary);
+    padding: 0.4rem 0.75rem;
+    font-size: var(--font-size-sm);
+    width: 140px;
     outline: none;
-    padding: 0.25rem 0.5rem;
-    width: 200px;
-    transition: all 0.15s linear;
-  }
-
-  #search::placeholder {
-    color: white;
+    transition: all var(--transition-base);
+    border-radius: 4px;
   }
 
   #search:focus {
-    background-color: var(--primary);
+    border-color: var(--color-accent);
+    background-color: var(--color-bg-primary);
+    width: 200px;
+  }
+
+  #search::placeholder {
+    color: var(--color-text-muted);
   }
 
   #search-results {
     position: absolute;
     top: calc(100% + 0.5rem);
     right: 0;
-    background-color: #252525;
-    border: 1px solid var(--primary);
+    background-color: var(--color-bg-primary);
+    border: 1px solid var(--color-border);
     display: none;
-    width: 200%;
-    z-index: 10;
-    padding: 0.5rem;
-    max-height: 30rem;
-    overflow: auto;
+    width: 350px;
+    max-width: 90vw;
+    max-height: 400px;
+    overflow-y: auto;
+    z-index: 100;
+    box-shadow: var(--shadow-md);
+    border-radius: 4px;
   }
 
   #search-results.active:has(*) {
     display: block;
   }
 
-  .mobile-nav-toggle {
-    display: none;
-    width: 40px;
-    height: 40px;
-    background-color: #121212;
-    border: 1px solid #353535;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    z-index: 2;
-  }
-
-  .menu-open {
-    display: none;
-  }
-
-  .mobile-nav-toggle.active .menu-open {
-    display: flex;
-  }
-
-  .mobile-nav-toggle.active .menu-closed {
-    display: none;
-  }
-
-  @media screen and (max-width: 640px) {
-    nav {
-      padding: 0 1rem;
-      padding-top: 1rem;
-      transition: all 0.25s ease;
+  @media screen and (max-width: 768px) {
+    .nav-container {
+      padding: 0 var(--space-4);
     }
 
-    .mobile-nav-toggle {
-      display: flex;
+    .nav-links {
+      gap: var(--space-4);
     }
 
-    .nav-separator {
+    .nav-links a:not(:has(svg)) {
       display: none;
-    }
-
-    nav ul {
-      flex-direction: column;
-      gap: 0;
-      position: absolute;
-      width: 100%;
-      top: calc(1rem + 40px);
-      right: 0;
-      padding: 1rem;
-      z-index: 1;
-      opacity: 0;
-      pointer-events: none;
-      transition: all 0.25s ease;
-      user-select: none;
-      height: calc(100vh - 1rem - 40px);
-      align-items: start;
-    }
-
-    nav.active {
-      background-color: #181818;
-    }
-
-    nav.active ul {
-      opacity: 1;
-      pointer-events: all;
-      background-color: #181818;
-    }
-
-    nav ul li {
-      position: relative;
-      transition: all 0.25s ease-out;
-      top: -1.5rem;
-      border-bottom: 1px solid #353535;
-      width: 100%;
-      max-width: none;
-      padding: 0;
-      font-size: 1.125em;
-    }
-
-    nav ul li a {
-      display: block;
-      padding: 0.75rem 0;
-      width: 100%;
-      padding-left: 1rem;
-    }
-
-    nav ul li:first-child {
-      border-top: 1px solid #353535;
-    }
-
-    nav.active ul li {
-      top: 0;
-    }
-
-    #search {
-      width: 100%;
-      max-width: none;
-      padding: 0.75rem 1rem;
-    }
-
-    #search-results {
-      width: 100%;
-      top: 100%;
-      font-size: 0.875em;
     }
   }
 </style>
+
 <style is:global>
   #search-results a {
     display: block;
+    padding: var(--space-4);
+    color: var(--color-text-primary);
     text-decoration: none;
-    color: white !important;
-    padding: 0.5rem;
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  #search-results a:last-child {
+    border-bottom: none;
   }
 
   #search-results a:hover,
-  #search-results a:focus-visible {
-    background-color: var(--primary);
+  #search-results a:focus {
+    background-color: var(--color-bg-secondary);
     outline: none;
   }
 
-  #search-results a:hover mark,
-  #search-results a:focus-visible mark {
-    background-color: #ffffff;
-    color: #000000;
+  #search-results h4 {
+    margin: 0 0 0.25rem 0;
+    font-size: var(--font-size-sm);
+    font-weight: 600;
   }
 
-  #search-results a h3 {
-    margin-bottom: 0.5rem;
-  }
-
-  #search-results a p {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+  #search-results p {
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--color-text-secondary);
+    line-height: var(--line-height-tight);
   }
 
   #search-results mark {
-    background-color: var(--primary);
-    color: white;
+    background-color: #fff9c4;
+    color: #444;
+    padding: 0 0.125rem;
   }
 
-  .separator {
-    margin: 0.5rem 0.5rem;
-    border: none;
-    height: 1px;
-    background-color: #353535;
+  #search-results .no-results {
+    padding: var(--space-4);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+    margin: 0;
   }
 </style>

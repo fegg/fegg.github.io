@@ -1,20 +1,6 @@
-@font-face {
-	font-family: "Geist";
-	src: url("/fonts/Geist.woff2") format("woff2");
-	font-weight: 100 900;
-	font-style: normal;
-	font-display: swap;
-}
-
-@font-face {
-	font-family: "Geist Mono";
-	src: url("/fonts/GeistMono.woff2") format("woff2");
-	font-weight: 100 900;
-	font-style: normal;
-	font-display: swap;
-}
-
-/* From https://github.com/withstudiocms/ui */
+/* ============================================
+   CSS Reset and Base Styles
+   ============================================ */
 
 *,
 *::before,
@@ -23,18 +9,22 @@
 }
 
 html {
-	color-scheme: dark;
-	background-color: #0b0b0b;
+	background-color: var(--color-bg-primary);
+	font-size: var(--font-size-base);
 }
 
 html,
 body {
 	margin: 0;
+	padding: 0;
 }
 
 body {
 	-webkit-font-smoothing: antialiased;
-	font-family: "Geist", Arial, Helvetica, sans-serif;
+	-moz-osx-font-smoothing: grayscale;
+	font-family: var(--font-sans);
+	color: var(--color-text-primary);
+	line-height: var(--line-height-base);
 }
 
 input,
@@ -49,19 +39,19 @@ h2,
 h3,
 h4,
 h5,
-h6,
-code {
+h6 {
 	overflow-wrap: anywhere;
-	font-family: "Geist Mono", "Courier New", Courier, monospace;
+	text-wrap: pretty;
+	font-family: var(--font-serif);
+	line-height: var(--line-height-heading);
+	color: var(--color-text-primary);
+	font-weight: 600;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-	text-wrap: pretty;
+code,
+pre,
+pre * {
+	font-family: var(--font-mono);
 }
 
 button {
@@ -69,29 +59,26 @@ button {
 	outline: none;
 	background: none;
 	padding: 0;
+	cursor: pointer;
 }
 
 p:last-of-type {
 	margin-bottom: 0;
 }
 
-pre,
-pre *,
-code {
-	font-family: "Geist Mono", "Courier New", Courier, monospace;
-	line-height: 1;
-}
-
 pre {
-	border: 1px solid rgb(#353535);
+	border: 1px solid var(--color-border);
+	overflow-x: auto;
 	overflow-y: hidden;
-	padding: 0.5rem;
-	border-radius: 0.25rem;
+	padding: var(--space-4);
+	background-color: var(--color-bg-secondary);
+	line-height: 1.5;
+	border-radius: 4px;
 }
 
 pre.astro-code code {
 	display: flex;
 	flex-direction: column;
-	font-size: 0.875em;
-	gap: 0.5rem;
+	font-size: var(--font-size-sm);
+	gap: var(--space-1);
 }

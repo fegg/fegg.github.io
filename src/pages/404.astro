@@ -3,37 +3,49 @@ import Layout from "../layouts/Layout.astro";
 ---
 
 <Layout
-  title={"404"}
+  title={"404 - Page Not Found"}
   description={"This page could not be found."}
   pagefindIgnore
 >
-  <div class="notfound-container" slot="404">
-    <h1 class="text-glow">404</h1>
-    <p>页面未找到</p>
-    <a class="block-link" href="/">← 返回首页</a>
+  <div class="notfound-container">
+    <h1>404</h1>
+    <p>Page not found</p>
+    <a class="back-link" href="/">← Back to Home</a>
   </div>
 </Layout>
+
 <style>
   .notfound-container {
     display: flex;
-    height: 80vh;
+    height: 60vh;
     justify-content: center;
     align-items: center;
     width: 100%;
     text-align: center;
     flex-direction: column;
+    gap: var(--spacing-sm);
   }
 
   .notfound-container h1 {
     font-size: 4rem;
     margin: 0;
+    color: var(--dark-text-primary);
+    font-weight: 700;
   }
 
   .notfound-container p {
-    font-size: 1.25em;
+    font-size: 1.25rem;
+    color: var(--dark-text-secondary);
+    margin: 0;
   }
 
-  .block-link {
-    margin-top: 1rem;
+  .back-link {
+    margin-top: var(--spacing-md);
+    color: var(--dark-text-secondary);
+    text-decoration: none;
+  }
+
+  .back-link:hover {
+    color: var(--accent-color);
   }
 </style>

@@ -1,175 +1,131 @@
-:root {
-	--primary: #8c5cf5;
-	/* Needed for some hover effects. This is just the R, G and B values of the hex color above */
-	--primary-rgb: 140, 92, 245;
-	/* Used for links */
-	--primary-light: #a277ff;
-	--primary-lightest: #c2a8fd;
+/* ============================================
+   Global Styles - Fast.ai Light Theme
+   ============================================ */
+
+/* Main Layout */
+main {
+	width: 100%;
+	min-height: calc(100vh - 60px);
 }
 
-.overview-list {
-	list-style-type: none;
-	padding: 0;
-	margin: 0;
+/* Typography */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	margin-top: var(--space-8);
+	margin-bottom: var(--space-4);
 }
 
-.overview-list li {
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	gap: 0.75rem;
-	margin-bottom: 0.75rem;
+h1 {
+	font-size: 2rem;
 }
 
-.overview-list li:last-of-type {
-	margin-bottom: 0;
+h2 {
+	font-size: 1.5rem;
 }
 
+h3 {
+	font-size: 1.25rem;
+}
+
+h4 {
+	font-size: 1.125rem;
+}
+
+p {
+	margin-bottom: var(--space-4);
+}
+
+/* Links */
 a {
-	color: var(--primary-light);
+	color: var(--color-accent);
 	text-decoration: none;
-	transition: color 0.15s ease;
+	transition: color var(--transition-base);
 }
 
 a:hover {
-	color: var(--primary-lightest);
+	color: var(--color-accent-hover);
 	text-decoration: underline;
 }
 
+/* Lists */
+ul,
+ol {
+	margin-bottom: var(--space-4);
+	padding-left: var(--space-6);
+}
+
+li {
+	margin-bottom: var(--space-2);
+}
+
+/* Code */
+code:not(.astro-code code) {
+	background-color: var(--color-bg-secondary);
+	padding: var(--space-1) var(--space-2);
+	font-size: 0.9em;
+	font-family: var(--font-mono);
+	border-radius: 3px;
+	color: var(--color-text-primary);
+}
+
+/* Utility Classes */
 .no-mt {
 	margin-top: 0;
 }
 
-main {
-	width: 100%;
-	max-width: 1280px;
+.container {
+	max-width: var(--layout-max-width);
 	margin: 0 auto;
-	display: flex;
-	flex-direction: column;
-	gap: 2rem;
-	padding: 2rem 0;
+	padding: 0 var(--space-6);
 }
 
-.glow-icon {
-	color: var(--primary);
-	filter: drop-shadow(0 0 4px var(--primary));
+.content-width {
+	max-width: var(--content-max-width);
+	margin: 0 auto;
 }
 
-.expressive-code {
-	margin-top: 1rem;
-}
+/* Responsive */
+@media screen and (max-width: 768px) {
+	.container {
+		padding: 0 var(--space-4);
+	}
 
-.expressive-code figure {
-	box-shadow: none !important;
-}
+	h1 {
+		font-size: 1.75rem;
+	}
 
-.expressive-code figure pre {
-	border-radius: 0 !important;
-}
+	h2 {
+		font-size: 1.375rem;
+	}
 
-.expressive-code figcaption {
-	border: none !important;
-	border-radius: 0 !important;
-}
+	h3 {
+		font-size: 1.125rem;
+	}
 
-.expressive-code figcaption::before {
-	border: none !important;
-}
-
-.expressive-code span.title:not(.is-terminal span.title) {
-	border-radius: 0 !important;
-}
-
-.expressive-code span.title::after {
-	border-top: 1px solid var(--primary) !important;
-	border-bottom: 0 !important;
-}
-
-.expressive-code .frame.has-title:not(.is-terminal) figcaption.header {
-	border-radius: 0 !important;
-}
-
-.post-container {
-	display: flex;
-	flex-direction: column;
-	gap: 1rem;
-	padding: 1rem;
-	border: 1px solid #353535;
-	color: #ffffff;
-	text-decoration: none;
-	transition:
-		background-color 0.15s ease,
-		border 0.15s ease;
-}
-
-.post-container:hover,
-.post-container:focus-visible {
-	background-color: rgba(var(--primary-rgb), 0.125);
-	border: 1px solid var(--primary);
-	color: white;
-	text-decoration: none;
-}
-
-.post-container:focus-visible {
-	outline: none;
-}
-
-.post-header {
-	display: flex;
-	flex-direction: row;
-	justify-content: space-between;
-}
-
-.post-header h3 {
-	margin: 0;
-}
-
-.post-date {
-	color: #c7c7c7;
-}
-
-.text-glow {
-	color: var(--primary);
-	filter: drop-shadow(0 0 12px var(--primary));
-}
-
-.block-link {
-	color: white;
-	padding: 0.25rem 0.5rem;
-}
-
-.block-link:hover,
-.block-link:focus-visible {
-	color: white;
-	background-color: var(--primary);
-	text-decoration: none;
-	outline: none;
-}
-
-@media screen and (max-width: 1380px) {
-	body {
-		padding: 0 2rem;
+	h4 {
+		font-size: 1rem;
 	}
 }
 
-@media screen and (max-width: 640px) {
-	body {
-		padding: 0;
-	}
-
-	main {
-		padding-top: 0;
-		gap: 1rem;
-	}
-
-	.post-header {
-		flex-direction: column;
-		gap: 0.5rem;
-	}
+/* Dark Mode Refinements */
+[data-theme="dark"] code:not(.astro-code code) {
+	background-color: var(--color-bg-tertiary);
+	color: var(--color-text-primary);
 }
 
-.content-container {
-	display: flex;
-	flex-direction: column;
-	gap: 1rem;
+[data-theme="dark"] .section-title {
+	border-bottom-color: var(--color-border);
+}
+
+[data-theme="dark"] .post-item {
+	border-bottom-color: var(--color-border);
+}
+
+/* Expressive Code Dark Mode Support */
+[data-theme="dark"] .expressive-code {
+	--ec-brdCol: var(--color-border);
 }

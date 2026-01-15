@@ -1,13 +1,12 @@
 ---
 import "../styles/article-list.css";
 
-import { getCollection } from "astro:content";
+import { getCollection, type CollectionEntry } from "astro:content";
 import { openGraph } from "spectre:globals";
-import type { GetStaticPaths } from "astro";
-import Card from "../components/Card.astro";
-import Icon from "../components/Icon.astro";
+import type { GetStaticPaths, Page } from "astro";
 import Pagination from "../components/Pagination.astro";
 import Layout from "../layouts/Layout.astro";
+import { SITE } from "../constants";
 
 export const getStaticPaths = (async ({ paginate }) => {
     const posts = await getCollection(
@@ -18,17 +17,16 @@ export const getStaticPaths = (async ({ paginate }) => {
         (a, b) => b.data.createdAt.getTime() - a.data.createdAt.getTime(),
     );
 
-    const tags = sortedPosts.flatMap((post) =>
-        post.data.tags.map((tag) => tag.id),
-    );
-
     return paginate(sortedPosts, {
-        pageSize: 5,
-        props: { tags },
+        pageSize: 10,
     });
 }) satisfies GetStaticPaths;
 
-const { page, tags } = Astro.props;
+interface Props {
+    page: Page<CollectionEntry<"posts">>;
+}
+
+const { page } = Astro.props;
 ---
 
 <Layout
@@ -36,50 +34,58 @@ const { page, tags } = Astro.props;
     description={openGraph.blog.description}
     pagefindIgnore
 >
-    <div class="layout-grid-right" slot="right">
-        <Card>
-            <div class="header-container">
-                <div class="header-left">
-                    <Icon
-                        type="lucide"
-                        name="rss"
-                        width={24}
-                        height={24}
-                        class="glow-icon"
-                    />
-                    <h2 class="header-title">
-                        所有文章 ({page.currentPage} / {page.lastPage})
-                    </h2>
-                </div>
-                <div class="header-pagination">
-                    <Pagination
-                        prevUrl={page.url.prev}
-                        nextUrl={page.url.next}
-                        class="header-pagination-nav"
-                    />
-                </div>
-            </div>
-            <div class="content-container">
-                {
-                    page.data.map((post) => (
-                        <a
-                            href={`/blog/${post.id}`}
-                            class="post-container"
-                            data-tags={post.data.tags
-                                .map((tag) => tag.id)
-                                .join(",")}
-                        >
-                            <div class="post-header">
-                                <h3>{post.data.title}</h3>
-                                <span class="post-date">
-                                    {post.data.createdAt.toLocaleDateString()}
-                                </span>
+    <div class="blog-home-container container">
+        <header class="home-header">
+            <h1 class="section-title">Blog</h1>
+        </header>
+
+        <div class="posts-list">
+            {
+                page.data.map((post) => (
+                    <article class="post-item">
+                        <div class="post-meta-col">
+                            <time class="post-date">
+                                {post.data.createdAt.toLocaleDateString(
+                                    "en-US",
+                                    {
+                                        month: "short",
+                                        day: "numeric",
+                                        year: "numeric",
+                                    },
+                                )}
+                            </time>
+                            <span class="post-author">
+                                {post.data.author ?? SITE.defaultAuthor}
+                            </span>
+                        </div>
+
+                        <div class="post-content-col">
+                            <h2 class="post-title">
+                                <a href={`/blog/${post.id}`}>
+                                    {post.data.title}
+                                </a>
+                            </h2>
+                            <div class="post-tags">
+                                {post.data.tags.map((tag: { id: string }) => (
+                                    <span class="tag-badge">{tag.id}</span>
+                                ))}
                             </div>
-                            <span>{post.data.description}</span>
-                        </a>
-                    ))
-                }
-            </div>
+                            <p class="post-excerpt">{post.data.description}</p>
+                        </div>
+
+                        {post.data.image && (
+                            <div class="post-image-col">
+                                <img
+                                    src={post.data.image.src}
+                                    alt=""
+                                    loading="lazy"
+                                />
+                            </div>
+                        )}
+                    </article>
+                ))
+            }
+
             <div class="pagination-container">
                 <Pagination
                     prevUrl={page.url.prev}
@@ -87,76 +93,154 @@ const { page, tags } = Astro.props;
                     class="footer-pagination-nav"
                 />
             </div>
-        </Card>
+        </div>
     </div>
 </Layout>
-<script>
-    const tags = document.querySelectorAll<HTMLAnchorElement>(".blog-tag");
-    const posts =
-        document.querySelectorAll<HTMLAnchorElement>(".post-container");
-    const url = new URL(window.location.href);
-    const initialTags =
-        url.searchParams
-            .get("tags")
-            ?.split(",")
-            .filter((tag) => tag.length > 0) || [];
-    const selectedTags = new Set(initialTags);
-
-    function updatePostsVisibility() {
-        posts.forEach((post) => {
-            const postTags = post.dataset.tags!.split(",");
-            // if there are selected tags and the post does not have all of them, hide the post
-            if (
-                selectedTags.size > 0 &&
-                ![...selectedTags].every((tag) => postTags.includes(tag))
-            ) {
-                post.style.display = "none";
-            } else {
-                post.style.display = "";
-            }
-        });
-    }
-
-    function updateURL() {
-        // create a "clean" URL for the current page before adding the new query parameters
-        const newUrl = new URL(
-            window.location.pathname,
-            window.location.origin,
-        );
-        if (selectedTags.size > 0) {
-            newUrl.searchParams.set("tags", [...selectedTags].join(","));
-        }
-        history.pushState({ tags: [...selectedTags] }, "", newUrl);
-    }
-
-    tags.forEach((tag) => {
-        const tagValue = tag.dataset.tag!;
-        if (selectedTags.has(tagValue)) {
-            tag.classList.add("active");
-        }
-
-        tag.addEventListener("click", (event) => {
-            event.preventDefault();
-
-            tag.classList.toggle("active");
-
-            if (selectedTags.has(tagValue)) {
-                selectedTags.delete(tagValue);
-            } else {
-                selectedTags.add(tagValue);
-            }
-
-            updatePostsVisibility();
-            updateURL();
-        });
-    });
-
-    updatePostsVisibility();
-</script>
 
 <style>
-    .header-title {
+    .blog-home-container {
+        padding-top: var(--space-8);
+        padding-bottom: var(--space-16);
+        max-width: var(--layout-max-width);
+    }
+
+    .home-header {
+        margin-bottom: var(--space-4);
+    }
+
+    .section-title {
+        font-size: 2rem;
         margin: 0;
-        font-size: 1.5rem;
+        padding-bottom: var(--space-4);
+        border-bottom: 2px solid var(--color-border-light);
+        font-family: var(--font-serif);
+        font-weight: 700;
+        color: var(--color-text-primary);
+    }
+
+    .posts-list {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .post-item {
+        display: grid;
+        grid-template-columns: 140px 1fr 240px;
+        gap: var(--space-8);
+        border-bottom: 1px solid var(--color-border-light);
+    }
+
+    .post-item:last-of-type {
+        border-bottom: none;
+    }
+
+    .post-meta-col {
+        display: flex;
+        flex-direction: column;
+        font-size: 0.9rem;
+        color: var(--color-text-secondary);
+        line-height: 1.5;
+    }
+
+    .post-date {
+        color: var(--color-text-secondary);
+    }
+
+    .post-author {
+        color: var(--color-text-muted);
+    }
+
+    .post-content-col {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        margin-bottom: var(--space-4);
+    }
+
+    .post-title {
+        margin: 0 0 var(--space-2);
+        font-size: 1.85rem;
+        font-family: var(--font-serif);
+        font-weight: 600;
+        line-height: 1.25;
+        color: #6c757d;
+    }
+
+    :global([data-theme="dark"]) .post-title {
+        color: var(--color-text-primary);
+    }
+
+    .post-title a {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    .post-title a:hover {
+        color: var(--color-accent);
+    }
+
+    .post-tags {
+        display: flex;
+        gap: var(--space-2);
+        margin-bottom: var(--space-4);
+    }
+
+    .tag-badge {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        border: 1px solid var(--color-border);
+        padding: 0.15rem 0.5rem;
+        border-radius: 4px;
+        color: var(--color-text-muted);
+        background-color: transparent;
+        letter-spacing: 0.02em;
+    }
+
+    .post-excerpt {
+        font-size: 1.15rem;
+        color: var(--color-text-secondary);
+        margin: 0;
+        line-height: 1.6;
+        max-width: 680px;
+    }
+
+    .post-image-col {
+        display: flex;
+        justify-content: flex-end;
+        align-items: flex-start;
+    }
+
+    .post-image-col img {
+        width: 100%;
+        max-width: 240px;
+        height: auto;
+        border-radius: 2px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .pagination-container {
+        margin-top: var(--space-12);
+        padding-top: var(--space-8);
+        border-top: 1px solid var(--color-border-light);
+    }
+
+    @media screen and (max-width: 1024px) {
+        .post-item {
+            grid-template-columns: 120px 1fr;
+        }
+        .post-image-col {
+            display: none;
+        }
+    }
+
+    @media screen and (max-width: 640px) {
+        .post-item {
+            grid-template-columns: 1fr;
+            gap: var(--space-4);
+        }
+        .post-meta-col {
+            flex-direction: row;
+            gap: var(--space-4);
+        }
     }
 </style>

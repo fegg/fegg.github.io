@@ -4,18 +4,12 @@ import "../../styles/article.css";
 import type { CollectionEntry } from "astro:content";
 import { getCollection, render } from "astro:content";
 import { giscus } from "spectre:globals";
+import { SITE } from "../../constants";
 import type { GetStaticPaths } from "astro";
-import Card from "../../components/Card.astro";
-import ImageGlow from "../../components/ImageGlow.astro";
 import Layout from "../../layouts/Layout.astro";
 
 /**
- * Estimates the time it takes to read a post in minutes based on:
- * - A reading speed of 200 words per minute
- * - 10 seconds per image
- * - 20 seconds per code block
- *
- * @param post The post to estimate the reading time for
+ * Estimates the time it takes to read a post in minutes
  */
 function timeToRead(post: CollectionEntry<"posts">): number {
   const numWords = (post.body || "")
@@ -60,136 +54,310 @@ const { Content, headings } = await render(post);
     updatedAt: post.data.updatedAt,
   }}
 >
-  <div class="left" slot="left">
-    <Card class="toc-card">
-      <h2 class="no-mt">Table of contents</h2>
-      <ol>
-        <li class="toc-li">
-          <a href={`#_top`} class="active">{post.data.title}</a>
-        </li>
-        {
-          headings.map((heading, i) => (
-            <li class="toc-li" data-depth={heading.depth}>
-              <a href={`#${heading.slug}`}>{heading.text}</a>
-            </li>
-          ))
-        }
-      </ol>
-    </Card>
-  </div>
-  <article slot="right" data-pagefind-body>
-    <Card>
-      <div class="article-header" id="_top" data-pagefind-ignore>
-        <ImageGlow
-          quality={100}
-          class="article-image"
-          src={post.data.image}
-          alt={post.data.title}
-        />
-        <div class="header">
-          <div>
-            <h1 class="no-mt article-h1">{post.data.title}</h1>
+  <div class="article-detail-page">
+    <header class="article-detail-header" data-pagefind-ignore>
+      <div class="header-content container">
+        <h1 class="article-h1">{post.data.title}</h1>
+        <p class="article-description">{post.data.description}</p>
+        <div class="article-tags">
+          {post.data.tags.map((tag) => <span class="tag-badge">{tag.id}</span>)}
+        </div>
+
+        <div class="article-meta-row">
+          <div class="meta-item">
+            <span class="meta-label">Author</span>
+            <span class="meta-value">{SITE.defaultAuthor || "Admin"}</span>
           </div>
-          <div class="article-info">
-            <span>{post.data.createdAt.toLocaleDateString()}</span>
-            <span>/</span>
-            <span
-              >{timeToRead(post)} minute{timeToRead(post) === 1 ? "" : "s"} to read</span
-            >
-            <span>/</span>
-            <span>Tags: {post.data.tags.map((tag) => tag.id).join(", ")}</span>
+          <div class="meta-item">
+            <span class="meta-label">Published</span>
+            <span class="meta-value">
+              {
+                post.data.createdAt.toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })
+              }
+            </span>
           </div>
         </div>
       </div>
-      <Content />
-      <hr class="end-of-article" />
-      <a href="/" class="block-link" data-pagefind-ignore>← 返回首页</a>
-    </Card>
-    {
-      giscus && (
-        <Card>
-          <div class="comments" data-pagefind-ignore>
-            <script
-              is:inline
-              src="https://giscus.app/client.js"
-              data-repo={giscus.repository}
-              data-repo-id={giscus.repositoryId}
-              data-category={giscus.category}
-              data-category-id={giscus.categoryId}
-              data-mapping={giscus.mapping}
-              data-strict={giscus.strict === true ? "1" : "0"}
-              data-reactions-enabled={
-                giscus.reactionsEnabled === true ? "1" : "0"
-              }
-              data-emit-metadata={giscus.emitMetadata === true ? "1" : "0"}
-              data-input-position={giscus.commentsInput}
-              data-theme={
-                giscus.theme || "https://spectre.lou.gg/styles/giscus"
-              }
-              data-lang={giscus.lang}
-              data-loading="lazy"
-              crossorigin="anonymous"
-              async
-            />
+    </header>
+
+    <div class="article-detail-body container">
+      <div class="article-layout">
+        <article class="article-main" data-pagefind-body>
+          <Content />
+
+          <hr class="end-of-article" />
+
+          <div class="article-footer-nav">
+            <a href="/" class="back-link">← Back to Blog</a>
           </div>
-        </Card>
-      )
-    }
-  </article>
+
+          {
+            giscus && (
+              <div class="comments-section">
+                <h2 id="comments">Comments</h2>
+                <script
+                  is:inline
+                  src="https://giscus.app/client.js"
+                  data-repo={giscus.repository}
+                  data-repo-id={giscus.repositoryId}
+                  data-category={giscus.category}
+                  data-category-id={giscus.categoryId}
+                  data-mapping={giscus.mapping}
+                  data-strict={giscus.strict === true ? "1" : "0"}
+                  data-reactions-enabled={
+                    giscus.reactionsEnabled === true ? "1" : "0"
+                  }
+                  data-emit-metadata={giscus.emitMetadata === true ? "1" : "0"}
+                  data-input-position={giscus.commentsInput}
+                  data-theme="light"
+                  data-lang={giscus.lang}
+                  data-loading="lazy"
+                  crossorigin="anonymous"
+                  async
+                />
+              </div>
+            )
+          }
+        </article>
+
+        <aside class="article-sidebar" data-pagefind-ignore>
+          {
+            headings.length > 0 && (
+              <nav class="toc-nav">
+                <h3>On this page</h3>
+                <ul>
+                  {headings.map((heading) => (
+                    <li class={`toc-depth-${heading.depth}`}>
+                      <a href={`#${heading.slug}`}>{heading.text}</a>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            )
+          }
+        </aside>
+      </div>
+    </div>
+  </div>
+  <script>
+    const observerOptions = {
+      root: null,
+      rootMargin: "0px 0px -80% 0px",
+      threshold: 0,
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        const id = entry.target.getAttribute("id");
+        if (entry.isIntersecting && id) {
+          document.querySelectorAll(".toc-nav a").forEach((link) => {
+            link.classList.remove("active");
+            if (link.getAttribute("href") === `#${id}`) {
+              link.classList.add("active");
+            }
+          });
+        }
+      });
+    }, observerOptions);
+
+    document
+      .querySelectorAll("article h1, article h2, article h3, article h4")
+      .forEach((section) => {
+        observer.observe(section);
+      });
+  </script>
 </Layout>
-<script src="../../scripts/toc.ts"></script>
-<style is:global>
-  .toc-card ol {
-    padding: 0;
+
+<style>
+  .article-detail-page {
+    background-color: var(--color-bg-primary);
+  }
+
+  .article-detail-header {
+    background-color: var(--color-bg-secondary);
+    padding: var(--space-12) 0 var(--space-12);
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  .header-content {
+    max-width: var(--layout-max-width);
+  }
+
+  .article-h1 {
+    font-size: 3rem;
+    margin: 0 0 var(--space-4);
+    line-height: 1.1;
+    font-weight: 700;
+    font-family: var(--font-serif);
+  }
+
+  .article-description {
+    font-size: 1.25rem;
+    color: var(--color-text-secondary);
+    max-width: 800px;
+    margin-bottom: var(--space-6);
+    line-height: var(--line-height-tight);
+  }
+
+  .article-tags {
+    display: flex;
+    gap: var(--space-2);
+    margin-bottom: var(--space-8);
+  }
+
+  .tag-badge {
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    color: var(--color-text-muted);
+    font-weight: 500;
+    letter-spacing: 0.05em;
+  }
+
+  .article-meta-row {
+    display: flex;
+    gap: var(--space-12);
+    border-top: 1px solid var(--color-border);
+    padding-top: var(--space-6);
+  }
+
+  .meta-item {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    margin-bottom: 0;
-    list-style-type: none;
-    position: relative;
+    gap: var(--space-1);
   }
 
-  .toc-card ol li a {
-    color: #c7c7c7;
-    font-size: 0.925rem;
-    padding: 0.25rem 0.5rem;
-    box-decoration-break: clone;
-    -webkit-box-decoration-break: clone;
+  .meta-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    font-weight: 600;
+    letter-spacing: 0.05em;
   }
 
-  .toc-card ol li a:hover {
-    color: white;
-    text-decoration: none;
+  .meta-value {
+    font-size: 0.9rem;
+    color: var(--color-text-primary);
+    font-weight: 500;
   }
 
-  .toc-card ol li a.active {
-    color: white;
-    background: var(--primary);
+  .article-detail-body {
+    padding-top: var(--space-12);
+    padding-bottom: var(--space-16);
   }
 
-  .left {
-    height: 100%;
-    position: relative;
+  .article-layout {
+    display: grid;
+    grid-template-columns: 1fr var(--sidebar-width);
+    gap: var(--space-16);
+    align-items: start;
   }
 
-  .toc-card {
+  .article-main {
+    max-width: var(--content-max-width);
+    min-width: 0;
+  }
+
+  .article-sidebar {
     position: sticky;
-    top: 2rem;
+    top: calc(var(--space-16) + 60px);
   }
 
-  article {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
+  .toc-nav h3 {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-4);
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    font-family: var(--font-sans);
   }
 
-  .comments * {
-    border-color: #353535 !important;
+  .toc-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-left: 1px solid var(--color-border);
   }
 
-  @media screen and (max-width: 640px) {
-    article {
-      gap: 1rem;
+  .toc-nav li {
+    margin: 0;
+  }
+
+  .toc-nav a {
+    display: block;
+    padding: var(--space-1) var(--space-4);
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    line-height: var(--line-height-tight);
+    border-left: 2px solid transparent;
+    margin-left: -1px;
+    transition: all var(--transition-fast);
+  }
+
+  .toc-nav a:hover,
+  .toc-nav a.active {
+    color: var(--color-accent);
+    border-left-color: var(--color-accent);
+    background-color: var(--color-bg-secondary);
+  }
+
+  .toc-depth-3 {
+    padding-left: var(--space-4);
+  }
+  .toc-depth-4 {
+    padding-left: var(--space-8);
+  }
+
+  .article-footer-nav {
+    margin-top: var(--space-12);
+    padding-top: var(--space-8);
+    border-top: 1px solid var(--color-border-light);
+  }
+
+  .back-link {
+    color: var(--color-text-secondary);
+    font-weight: 500;
+  }
+
+  .comments-section {
+    margin-top: var(--space-16);
+    padding-top: var(--space-12);
+    border-top: 2px solid var(--color-bg-secondary);
+  }
+
+  .comments-section h2 {
+    font-size: 1.5rem;
+    margin-bottom: var(--space-8);
+    font-family: var(--font-serif);
+  }
+
+  @media screen and (max-width: 1024px) {
+    .article-layout {
+      grid-template-columns: 1fr;
+    }
+    .article-sidebar {
+      display: none;
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    .article-h1 {
+      font-size: 2.25rem;
+    }
+    .article-detail-header {
+      padding: var(--space-8) 0;
+    }
+    .article-meta-row {
+      flex-direction: column;
+      gap: var(--space-4);
     }
   }
 </style>

@@ -5,7 +5,7 @@ import node from '@astrojs/node';
 import sitemap from '@astrojs/sitemap';
 import { defineConfig } from 'astro/config';
 import expressiveCode from 'astro-expressive-code';
-import { spectreDark } from './src/ec-theme';
+import { spectreLight, spectreDark } from './src/ec-theme';
 import spectre from './package/src/integration';
 import { SITE } from './src/constants';
 
@@ -16,7 +16,8 @@ const config = defineConfig({
 	output: 'static',
 	integrations: [
 		expressiveCode({
-			themes: [spectreDark],
+			themes: [spectreLight, spectreDark],
+			themeCssSelector: (theme) => `[data-theme="${theme.type}"]`,
 		}),
 		mdx(),
 		sitemap(),

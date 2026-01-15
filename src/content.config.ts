@@ -18,6 +18,7 @@ const posts = defineCollection({
 			description: z.string(),
 			tags: z.array(reference('tags')),
 			draft: z.boolean().optional().default(false),
+			author: z.string().optional(),
 			image: image(),
 		}),
 });

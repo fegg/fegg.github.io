@@ -1,6 +1,4 @@
 ---
-import Icon from "./Icon.astro";
-
 interface Props {
     prevUrl?: string;
     nextUrl?: string;
@@ -13,44 +11,21 @@ const { prevUrl, nextUrl, class: className } = Astro.props;
 <div class:list={["pagination-wrapper", className]}>
     {
         prevUrl ? (
-            <a href={prevUrl} class="icon-button" aria-label="Previous Page">
-                <Icon
-                    type="lucide"
-                    name="chevron-left"
-                    width={24}
-                    height={24}
-                />
+            <a href={prevUrl} class="pagination-link prev">
+                ← Newer Posts
             </a>
         ) : (
-            <span class="icon-button disabled">
-                <Icon
-                    type="lucide"
-                    name="chevron-left"
-                    width={24}
-                    height={24}
-                />
-            </span>
+            <span class="pagination-link disabled">← Newer Posts</span>
         )
     }
+
     {
         nextUrl ? (
-            <a href={nextUrl} class="icon-button" aria-label="Next Page">
-                <Icon
-                    type="lucide"
-                    name="chevron-right"
-                    width={24}
-                    height={24}
-                />
+            <a href={nextUrl} class="pagination-link next">
+                Older Posts →
             </a>
         ) : (
-            <span class="icon-button disabled">
-                <Icon
-                    type="lucide"
-                    name="chevron-right"
-                    width={24}
-                    height={24}
-                />
-            </span>
+            <span class="pagination-link disabled">Older Posts →</span>
         )
     }
 </div>
@@ -58,17 +33,40 @@ const { prevUrl, nextUrl, class: className } = Astro.props;
 <style>
     .pagination-wrapper {
         display: flex;
-        gap: 0.5rem;
+        justify-content: space-between;
+        gap: var(--spacing-md);
+        width: 100%;
     }
+
+    .pagination-link {
+        color: var(--color-text-secondary);
+        text-decoration: none;
+        font-size: 0.9375rem;
+        transition: all var(--transition-base);
+    }
+
+    .pagination-link:not(.disabled):hover {
+        color: var(--color-accent);
+    }
+
+    .pagination-link.disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
+
+    .pagination-link.prev {
+        text-align: left;
+    }
+
+    .pagination-link.next {
+        text-align: right;
+        margin-left: auto;
+    }
+
+    /* Hide header pagination on mobile */
     @media (max-width: 768px) {
-        .pagination-wrapper {
-            &.header-pagination-nav {
-                display: none;
-            }
-        }
-        .footer-pagination-nav {
-            flex: 1;
-            justify-content: space-between;
+        .pagination-wrapper.header-pagination-nav {
+            display: none;
         }
     }
 </style>
